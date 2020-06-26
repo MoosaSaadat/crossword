@@ -102,7 +102,15 @@ class CrosswordCreator:
         (Remove any values that are inconsistent with a variable's unary
          constraints; in this case, the length of the word.)
         """
-        raise NotImplementedError
+        allWords = self.crossword.words
+        usedWords = []
+        for variable in self.domains.keys():
+            sameLengthWords = []
+            for word in allWords:
+                if len(word) == variable.length and word not in usedWords:
+                    sameLengthWords.append(word)
+                    usedWords.append(word)
+            self.domains[variable] = sameLengthWords
 
     def revise(self, x, y):
         """
