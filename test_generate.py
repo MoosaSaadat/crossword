@@ -14,6 +14,18 @@ class TestGenerate(unittest.TestCase):
         creator = CrosswordCreator(crossword)
         creator.enforce_node_consistency()
 
+    def test_revise(self):
+        # Parse command-line arguments
+        structure = "data/structure1.txt"
+        words = "data/words1.txt"
+
+        # Generate crossword
+        crossword = Crossword(structure, words)
+        creator = CrosswordCreator(crossword)
+        creator.enforce_node_consistency()
+        vs = list(creator.domains.keys())
+        creator.revise(vs[0], vs[1])
+
 
 if __name__ == "__main__":
     unittest.main()
