@@ -13,8 +13,6 @@ class TestGenerate(unittest.TestCase):
         crossword = Crossword(structure, words)
         creator = CrosswordCreator(crossword)
         creator.enforce_node_consistency()
-        for variable, words in creator.domains.items():
-            print(f"{variable}: {words}")
 
 
 if __name__ == "__main__":
