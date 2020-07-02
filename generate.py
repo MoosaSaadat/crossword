@@ -155,21 +155,70 @@ class CrosswordCreator:
         Return True if arc consistency is enforced and no domains are empty;
         return False if one or more domains end up empty.
         """
-        raise NotImplementedError
+        # All arcs
+        if not arcs:
+            arcs = list(self.crossword.overlaps.keys())
+
+        while arcs:
+            # print(arcs)
+            x, y = arcs.pop(0)
+            # print(f"{x}, {y}:", end="\t")
+            if self.revise(x, y):
+                # print(f"{self.domains[x]}")
+                if not self.domains[x]:
+                    return False
+                neighbors = [
+                    v2
+                    for v1, v2 in self.crossword.overlaps
+                    if v1 == x and v2 != y
+                ]
+                # print(f"\tNeighbors: {neighbors}")
+                for neighbor in neighbors:
+                    arcs.append((neighbor, x))
+            # print()
+        return True
 
     def assignment_complete(self, assignment):
         """
         Return True if `assignment` is complete (i.e., assigns a value to each
         crossword variable); return False otherwise.
         """
-        raise NotImplementedError
+        for v in self.crossword.variables:
+            if v not in assignment or not assignment[v]:
+                return False
+
+        return True
 
     def consistent(self, assignment):
         """
         Return True if `assignment` is consistent (i.e., words fit in crossword
         puzzle without conflicting characters); return False otherwise.
         """
-        raise NotImplementedError
+        allWords = []
+        for v, word in assignment.items():
+            
+            # Check if word is unique
+            if word not in allWords:
+                allWords.append(word)
+            else:
+                return False
+
+            # Check length
+            if v.length != len(word):
+                return False
+            
+        # Check conflicts
+        for x, y in self.crossword.overlaps:
+            if x in assignment and y in assignment:
+
+                xWord = assignment[x]
+                yWord = assignment[y]
+                overlap = self.crossword.overlaps[(x,y)]
+
+                if xWord[overlap[0]] != yWord[overlap[1]]:
+                    return False
+        
+        return True
 
     def order_domain_values(self, var, assignment):
         """
